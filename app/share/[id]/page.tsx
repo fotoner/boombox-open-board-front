@@ -1,46 +1,49 @@
-import { css } from "@emotion/react"
-import styled from "@emotion/styled"
-import { Clock, Twitter } from "lucide-react"
-import type { Metadata } from "next"
-import type { Theme } from "@/types/theme"
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import { Clock, Twitter } from "lucide-react";
+import type { Metadata } from "next";
+import type { Theme } from "@/types/theme";
 
 const Container = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 100%);
-`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 const Header = styled.div`
   background: linear-gradient(90deg, #9333ea 0%, #ec4899 100%);
   color: white;
   padding: 2rem 0;
-`
+`;
 
 const HeaderContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
   text-align: center;
-`
+`;
 
 const HeaderTitle = styled.h1`
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
-  
+
   @media (min-width: 768px) {
     font-size: 1.875rem;
   }
-`
+`;
 
 const HeaderSubtitle = styled.p`
   opacity: 0.9;
-`
+`;
 
 const MainContent = styled.div`
   max-width: 48rem;
   margin: 0 auto;
   padding: 3rem 1rem;
-`
+`;
 
 const ThemeCard = styled.div`
   background: white;
@@ -48,7 +51,7 @@ const ThemeCard = styled.div`
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-`
+`;
 
 const CardHeader = styled.div`
   background-color: #faf5ff;
@@ -56,30 +59,30 @@ const CardHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`
+`;
 
 const AuthorInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`
+`;
 
 const AuthorDetails = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.125rem;
-`
+`;
 
 const AuthorNickname = styled.span`
   font-weight: 600;
   color: #7c3aed;
   font-size: 0.875rem;
-`
+`;
 
 const AuthorId = styled.span`
   font-size: 0.75rem;
   color: #6b7280;
-`
+`;
 
 const Badge = styled.span`
   background-color: #e0e7ff;
@@ -88,18 +91,18 @@ const Badge = styled.span`
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-`
+`;
 
 const TimeInfo = styled.div`
   display: flex;
   align-items: center;
   font-size: 0.875rem;
   color: #6b7280;
-`
+`;
 
 const CardContent = styled.div`
   padding: 2rem;
-`
+`;
 
 const ThemeQuote = styled.blockquote`
   font-size: 1.25rem;
@@ -107,21 +110,21 @@ const ThemeQuote = styled.blockquote`
   color: #374151;
   text-align: center;
   line-height: 1.6;
-  
+
   @media (min-width: 768px) {
     font-size: 1.5rem;
   }
-`
+`;
 
 const CallToAction = styled.div`
   margin-top: 2rem;
   text-align: center;
-`
+`;
 
 const CTAText = styled.p`
   color: #6b7280;
   margin-bottom: 1rem;
-`
+`;
 
 const CTAButton = styled.a`
   display: inline-flex;
@@ -133,11 +136,11 @@ const CTAButton = styled.a`
   border-radius: 0.5rem;
   font-weight: 500;
   transition: background-color 0.2s;
-  
+
   &:hover {
     background-color: #6d28d9;
   }
-`
+`;
 
 const ErrorCard = styled.div`
   background: white;
@@ -146,18 +149,18 @@ const ErrorCard = styled.div`
   text-align: center;
   max-width: 28rem;
   margin: 0 auto;
-`
+`;
 
 const ErrorTitle = styled.h1`
   font-size: 1.5rem;
   font-weight: bold;
   color: #374151;
   margin-bottom: 1rem;
-`
+`;
 
 const ErrorText = styled.p`
   color: #6b7280;
-`
+`;
 
 // 모의 데이터 (닉네임 포함)
 const mockThemes: Theme[] = [
@@ -185,26 +188,30 @@ const mockThemes: Theme[] = [
     createdAt: new Date("2024-01-13T09:45:00"),
     createdByMe: false,
   },
-]
+];
 
 interface SharePageProps {
   params: {
-    id: string
-  }
+    id: string;
+  };
 }
 
-export async function generateMetadata({ params }: SharePageProps): Promise<Metadata> {
-  const theme = mockThemes.find((t) => t.id === params.id)
+export async function generateMetadata({
+  params,
+}: SharePageProps): Promise<Metadata> {
+  const theme = mockThemes.find((t) => t.id === params.id);
 
   if (!theme) {
     return {
       title: "테마를 찾을 수 없습니다 - 오타쿠붐박스",
       description: "요청하신 테마를 찾을 수 없습니다.",
-    }
+    };
   }
 
-  const title = `"${theme.content}" - 오타쿠붐박스 테마 제안`
-  const description = `${theme.authorNickname || theme.author}님이 제안한 오타쿠붐박스 테마: ${theme.content}`
+  const title = `"${theme.content}" - 오타쿠붐박스 테마 제안`;
+  const description = `${
+    theme.authorNickname || theme.author
+  }님이 제안한 오타쿠붐박스 테마: ${theme.content}`;
 
   return {
     title,
@@ -221,11 +228,11 @@ export async function generateMetadata({ params }: SharePageProps): Promise<Meta
       description,
       images: ["/placeholder.svg?height=630&width=1200"],
     },
-  }
+  };
 }
 
 export default function SharePage({ params }: SharePageProps) {
-  const theme = mockThemes.find((t) => t.id === params.id)
+  const theme = mockThemes.find((t) => t.id === params.id);
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("ko-KR", {
@@ -234,24 +241,18 @@ export default function SharePage({ params }: SharePageProps) {
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    }).format(date)
-  }
+    }).format(date);
+  };
 
   if (!theme) {
     return (
-      <Container
-        css={css`
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      `}
-      >
+      <Container>
         <ErrorCard>
           <ErrorTitle>테마를 찾을 수 없습니다</ErrorTitle>
           <ErrorText>요청하신 테마가 존재하지 않거나 삭제되었습니다.</ErrorText>
         </ErrorCard>
       </Container>
-    )
+    );
   }
 
   return (
@@ -260,7 +261,9 @@ export default function SharePage({ params }: SharePageProps) {
       <Header>
         <HeaderContainer>
           <HeaderTitle>오타쿠붐박스 테마 제안</HeaderTitle>
-          <HeaderSubtitle>커뮤니티에서 제안된 테마를 확인해보세요</HeaderSubtitle>
+          <HeaderSubtitle>
+            커뮤니티에서 제안된 테마를 확인해보세요
+          </HeaderSubtitle>
         </HeaderContainer>
       </Header>
 
@@ -271,7 +274,9 @@ export default function SharePage({ params }: SharePageProps) {
             <AuthorInfo>
               <Twitter size={20} color="#3b82f6" />
               <AuthorDetails>
-                <AuthorNickname>{theme.authorNickname || "익명"}</AuthorNickname>
+                <AuthorNickname>
+                  {theme.authorNickname || "익명"}
+                </AuthorNickname>
                 <AuthorId>{theme.author}</AuthorId>
               </AuthorDetails>
               <Badge>테마 제안</Badge>
@@ -288,10 +293,13 @@ export default function SharePage({ params }: SharePageProps) {
 
         {/* Call to Action */}
         <CallToAction>
-          <CTAText>이 테마가 마음에 드시나요? 오타쿠붐박스에서 더 많은 테마를 확인해보세요!</CTAText>
+          <CTAText>
+            이 테마가 마음에 드시나요? 오타쿠붐박스에서 더 많은 테마를
+            확인해보세요!
+          </CTAText>
           <CTAButton href="/">오타쿠붐박스 메인으로 가기</CTAButton>
         </CallToAction>
       </MainContent>
     </Container>
-  )
+  );
 }

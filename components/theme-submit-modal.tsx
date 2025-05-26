@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { css } from "@emotion/react"
-import styled from "@emotion/styled"
-import { Send, X } from "lucide-react"
-import { trackThemeSubmit, trackModalClose } from "@/lib/gtag"
+import { useState } from "react";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import { Send, X } from "lucide-react";
+import { trackThemeSubmit, trackModalClose } from "@/lib/gtag";
 
 const Overlay = styled.div<{ isOpen: boolean }>`
   position: fixed;
@@ -20,7 +20,7 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   justify-content: center;
   z-index: 50;
   padding: 1rem;
-`
+`;
 
 const Modal = styled.div`
   background: white;
@@ -29,20 +29,20 @@ const Modal = styled.div`
   width: 100%;
   max-width: 28rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-`
+`;
 
 const ModalHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
-`
+`;
 
 const ModalTitle = styled.h2`
   font-size: 1.25rem;
   font-weight: bold;
   color: #7c3aed;
-`
+`;
 
 const CloseButton = styled.button`
   background: none;
@@ -50,15 +50,15 @@ const CloseButton = styled.button`
   cursor: pointer;
   padding: 0.25rem;
   color: #6b7280;
-  
+
   &:hover {
     color: #374151;
   }
-`
+`;
 
 const FormGroup = styled.div`
   margin-bottom: 1rem;
-`
+`;
 
 const Label = styled.label`
   display: block;
@@ -66,7 +66,7 @@ const Label = styled.label`
   font-weight: 500;
   margin-bottom: 0.5rem;
   color: #374151;
-`
+`;
 
 const Textarea = styled.textarea`
   width: 100%;
@@ -76,29 +76,29 @@ const Textarea = styled.textarea`
   border-radius: 0.375rem;
   font-size: 0.875rem;
   resize: vertical;
-  
+
   &:focus {
     outline: none;
     border-color: #7c3aed;
     box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
   }
-  
+
   &::placeholder {
     color: #9ca3af;
   }
-`
+`;
 
 const CharCount = styled.p`
   font-size: 0.75rem;
   color: #6b7280;
   margin-top: 0.25rem;
-`
+`;
 
 const ButtonGroup = styled.div`
   display: flex;
   gap: 0.5rem;
   padding-top: 1rem;
-`
+`;
 
 const Button = styled.button<{ variant?: "primary" | "secondary" }>`
   flex: 1;
@@ -112,62 +112,66 @@ const Button = styled.button<{ variant?: "primary" | "secondary" }>`
   border: none;
   cursor: pointer;
   transition: all 0.2s;
-  
+
   ${(props) =>
     props.variant === "primary" &&
     css`
-    background-color: #7c3aed;
-    color: white;
-    &:hover:not(:disabled) {
-      background-color: #6d28d9;
-    }
-  `}
-  
+      background-color: #7c3aed;
+      color: white;
+      &:hover:not(:disabled) {
+        background-color: #6d28d9;
+      }
+    `}
+
   ${(props) =>
     props.variant === "secondary" &&
     css`
-    background-color: transparent;
-    color: #374151;
-    border: 1px solid #d1d5db;
-    &:hover {
-      background-color: #f9fafb;
-    }
-  `}
+      background-color: transparent;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      &:hover {
+        background-color: #f9fafb;
+      }
+    `}
   
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-`
+`;
 
 interface ThemeSubmitModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSubmit: (content: string) => void
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (content: string) => void;
 }
 
-export default function ThemeSubmitModal({ isOpen, onClose, onSubmit }: ThemeSubmitModalProps) {
-  const [content, setContent] = useState("")
+export default function ThemeSubmitModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: ThemeSubmitModalProps) {
+  const [content, setContent] = useState("");
 
   const handleSubmit = () => {
     if (content.trim()) {
-      onSubmit(content.trim())
-      trackThemeSubmit(content.trim())
-      setContent("")
+      onSubmit(content.trim());
+      trackThemeSubmit(content.trim());
+      setContent("");
     }
-  }
+  };
 
   const handleClose = () => {
-    setContent("")
-    trackModalClose("theme_submit")
-    onClose()
-  }
+    setContent("");
+    trackModalClose("theme_submit");
+    onClose();
+  };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      handleClose()
+      handleClose();
     }
-  }
+  };
 
   return (
     <Overlay isOpen={isOpen} onClick={handleOverlayClick}>
@@ -195,12 +199,16 @@ export default function ThemeSubmitModal({ isOpen, onClose, onSubmit }: ThemeSub
           <Button variant="secondary" onClick={handleClose}>
             취소
           </Button>
-          <Button variant="primary" onClick={handleSubmit} disabled={!content.trim()}>
+          <Button
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={!content.trim()}
+          >
             <Send size={16} style={{ marginRight: "0.5rem" }} />
             제안하기
           </Button>
         </ButtonGroup>
       </Modal>
     </Overlay>
-  )
+  );
 }

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { css } from "@emotion/react"
-import styled from "@emotion/styled"
-import { Twitter, X, CheckCircle, Share2 } from "lucide-react"
-import type { Theme } from "@/types/theme"
-import { trackThemeShare, trackModalClose } from "@/lib/gtag"
+import type React from "react";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import { Twitter, X, CheckCircle, Share2 } from "lucide-react";
+import type { Theme } from "@/types/theme";
+import { trackThemeShare, trackModalClose } from "@/lib/gtag";
 
 const Overlay = styled.div<{ isOpen: boolean }>`
   position: fixed;
@@ -19,7 +19,7 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   justify-content: center;
   z-index: 50;
   padding: 1rem;
-`
+`;
 
 const Modal = styled.div`
   background: white;
@@ -29,14 +29,14 @@ const Modal = styled.div`
   max-width: 32rem;
   box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
   text-align: center;
-`
+`;
 
 const ModalHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
-`
+`;
 
 const CloseButton = styled.button`
   background: none;
@@ -44,11 +44,11 @@ const CloseButton = styled.button`
   cursor: pointer;
   padding: 0.25rem;
   color: #6b7280;
-  
+
   &:hover {
     color: #374151;
   }
-`
+`;
 
 const SuccessIcon = styled.div`
   display: flex;
@@ -60,20 +60,20 @@ const SuccessIcon = styled.div`
   border-radius: 50%;
   margin: 0 auto 1.5rem;
   color: white;
-`
+`;
 
 const Title = styled.h2`
   font-size: 1.5rem;
   font-weight: bold;
   color: #374151;
   margin-bottom: 0.5rem;
-`
+`;
 
 const Subtitle = styled.p`
   color: #6b7280;
   margin-bottom: 2rem;
   line-height: 1.5;
-`
+`;
 
 const ThemePreview = styled.div`
   background: linear-gradient(135deg, #faf5ff, #f3e8ff);
@@ -81,42 +81,42 @@ const ThemePreview = styled.div`
   border-radius: 0.5rem;
   padding: 1.5rem;
   margin-bottom: 2rem;
-`
+`;
 
 const ThemeContent = styled.p`
   font-size: 1.125rem;
   font-weight: 500;
   color: #7c3aed;
   margin-bottom: 0.5rem;
-`
+`;
 
 const AuthorInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.125rem;
   align-items: center;
-`
+`;
 
 const AuthorNickname = styled.p`
   font-size: 0.875rem;
   font-weight: 500;
   color: #374151;
-`
+`;
 
 const AuthorId = styled.p`
   font-size: 0.75rem;
   color: #6b7280;
-`
+`;
 
 const ButtonGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  
+
   @media (min-width: 640px) {
     flex-direction: row;
   }
-`
+`;
 
 const Button = styled.button<{ variant?: "primary" | "secondary" }>`
   flex: 1;
@@ -130,29 +130,29 @@ const Button = styled.button<{ variant?: "primary" | "secondary" }>`
   border: none;
   cursor: pointer;
   transition: all 0.2s;
-  
+
   ${(props) =>
     props.variant === "primary" &&
     css`
-    background: linear-gradient(135deg, #1da1f2, #0d8bd9);
-    color: white;
-    &:hover {
-      background: linear-gradient(135deg, #0d8bd9, #0a7bc4);
-      transform: translateY(-1px);
-    }
-  `}
-  
+      background: linear-gradient(135deg, #1da1f2, #0d8bd9);
+      color: white;
+      &:hover {
+        background: linear-gradient(135deg, #0d8bd9, #0a7bc4);
+        transform: translateY(-1px);
+      }
+    `}
+
   ${(props) =>
     props.variant === "secondary" &&
     css`
-    background-color: #f9fafb;
-    color: #374151;
-    border: 1px solid #e5e7eb;
-    &:hover {
-      background-color: #f3f4f6;
-    }
-  `}
-`
+      background-color: #f9fafb;
+      color: #374151;
+      border: 1px solid #e5e7eb;
+      &:hover {
+        background-color: #f3f4f6;
+      }
+    `}
+`;
 
 const ShareInfo = styled.div`
   background: #eff6ff;
@@ -161,7 +161,7 @@ const ShareInfo = styled.div`
   padding: 1rem;
   margin-bottom: 1.5rem;
   text-align: left;
-`
+`;
 
 const ShareInfoTitle = styled.h4`
   font-size: 0.875rem;
@@ -170,46 +170,54 @@ const ShareInfoTitle = styled.h4`
   margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
-`
+`;
 
 const ShareInfoText = styled.p`
   font-size: 0.75rem;
   color: #1e40af;
   line-height: 1.4;
-`
+`;
 
 interface FinishModalProps {
-  isOpen: boolean
-  onClose: () => void
-  theme: Theme | null
+  isOpen: boolean;
+  onClose: () => void;
+  theme: Theme | null;
 }
 
-export default function FinishModal({ isOpen, onClose, theme }: FinishModalProps) {
+export default function FinishModal({
+  isOpen,
+  onClose,
+  theme,
+}: FinishModalProps) {
   const handleShare = () => {
-    if (!theme) return
+    if (!theme) return;
 
-    const shareUrl = `${window.location.origin}/share/${theme.id}`
-    const tweetText = `오타쿠붐박스 테마 제안: "${theme.content}" - ${theme.authorNickname || theme.author}`
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`
+    const shareUrl = `${window.location.origin}/share/${theme.id}`;
+    const tweetText = `오타쿠붐박스 테마 제안: "${theme.content}" - ${
+      theme.authorNickname || theme.author
+    }`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      tweetText
+    )}&url=${encodeURIComponent(shareUrl)}`;
 
     // Google Analytics 이벤트 추적
-    trackThemeShare(theme.id, "twitter")
+    trackThemeShare(theme.id, "twitter");
 
-    window.open(twitterUrl, "_blank")
-  }
+    window.open(twitterUrl, "_blank");
+  };
 
   const handleClose = () => {
-    trackModalClose("finish")
-    onClose()
-  }
+    trackModalClose("finish");
+    onClose();
+  };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      handleClose()
+      handleClose();
     }
-  }
+  };
 
-  if (!theme) return null
+  if (!theme) return null;
 
   return (
     <Overlay isOpen={isOpen} onClick={handleOverlayClick}>
@@ -235,7 +243,9 @@ export default function FinishModal({ isOpen, onClose, theme }: FinishModalProps
         <ThemePreview>
           <ThemeContent>"{theme.content}"</ThemeContent>
           <AuthorInfo>
-            <AuthorNickname>제안자: {theme.authorNickname || "익명"}</AuthorNickname>
+            <AuthorNickname>
+              제안자: {theme.authorNickname || "익명"}
+            </AuthorNickname>
             <AuthorId>{theme.author}</AuthorId>
           </AuthorInfo>
         </ThemePreview>
@@ -263,5 +273,5 @@ export default function FinishModal({ isOpen, onClose, theme }: FinishModalProps
         </ButtonGroup>
       </Modal>
     </Overlay>
-  )
+  );
 }
