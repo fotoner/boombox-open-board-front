@@ -30,7 +30,7 @@ const HeaderTitle = styled.h1`
   font-weight: bold;
   margin-bottom: 0.5rem;
 
-  @media (min-width: 768px) {
+  @media (min-width: 550px) {
     font-size: 1.875rem;
   }
 `;
@@ -111,7 +111,7 @@ const ThemeQuote = styled.blockquote`
   text-align: center;
   line-height: 1.6;
 
-  @media (min-width: 768px) {
+  @media (min-width: 550px) {
     font-size: 1.5rem;
   }
 `;
@@ -203,15 +203,15 @@ export async function generateMetadata({
 
   if (!theme) {
     return {
-      title: "테마를 찾을 수 없습니다 - 오타쿠붐박스",
+      title: "테마를 찾을 수 없습니다 - 오타쿠 붐박스",
       description: "요청하신 테마를 찾을 수 없습니다.",
     };
   }
 
-  const title = `"${theme.content}" - 오타쿠붐박스 테마 제안`;
+  const title = `"${theme.content}" - 오타쿠 붐박스 테마 제안`;
   const description = `${
     theme.authorNickname || theme.author
-  }님이 제안한 오타쿠붐박스 테마: ${theme.content}`;
+  }님이 제안한 오타쿠 붐박스 테마: ${theme.content}`;
 
   return {
     title,
@@ -260,7 +260,7 @@ export default function SharePage({ params }: SharePageProps) {
       {/* Header */}
       <Header>
         <HeaderContainer>
-          <HeaderTitle>오타쿠붐박스 테마 제안</HeaderTitle>
+          <HeaderTitle>오타쿠 붐박스 테마 제안</HeaderTitle>
           <HeaderSubtitle>
             커뮤니티에서 제안된 테마를 확인해보세요
           </HeaderSubtitle>
@@ -294,10 +294,10 @@ export default function SharePage({ params }: SharePageProps) {
         {/* Call to Action */}
         <CallToAction>
           <CTAText>
-            이 테마가 마음에 드시나요? 오타쿠붐박스에서 더 많은 테마를
+            이 테마가 마음에 드시나요? 오타쿠 붐박스에서 더 많은 테마를
             확인해보세요!
           </CTAText>
-          <CTAButton href="/">오타쿠붐박스 메인으로 가기</CTAButton>
+          <CTAButton href="/">오타쿠 붐박스 메인으로 가기</CTAButton>
         </CallToAction>
       </MainContent>
     </Container>

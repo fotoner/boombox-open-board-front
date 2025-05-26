@@ -6,6 +6,7 @@ import styled from "@emotion/styled";
 import { Twitter, X, CheckCircle, Share2 } from "lucide-react";
 import type { Theme } from "@/types/theme";
 import { trackThemeShare, trackModalClose } from "@/lib/gtag";
+import { getTwitterShareUrl } from "@/app/utils/share";
 
 const Overlay = styled.div<{ isOpen: boolean }>`
   position: fixed;
@@ -84,7 +85,7 @@ const ThemePreview = styled.div`
 `;
 
 const ThemeContent = styled.p`
-  font-size: 1.125rem;
+  font-size: 1.5rem;
   font-weight: 500;
   color: #7c3aed;
   margin-bottom: 0.5rem;
@@ -192,13 +193,7 @@ export default function FinishModal({
   const handleShare = () => {
     if (!theme) return;
 
-    const shareUrl = `${window.location.origin}/share/${theme.id}`;
-    const tweetText = `오타쿠붐박스 테마 제안: "${theme.content}" - ${
-      theme.authorNickname || theme.author
-    }`;
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      tweetText
-    )}&url=${encodeURIComponent(shareUrl)}`;
+    const twitterUrl = getTwitterShareUrl(theme);
 
     // Google Analytics 이벤트 추적
     trackThemeShare(theme.id, "twitter");
@@ -233,9 +228,9 @@ export default function FinishModal({
           <CheckCircle size={32} />
         </SuccessIcon>
 
-        <Title>테마 제안 완료!</Title>
+        <Title>테마 신청 완료!</Title>
         <Subtitle>
-          새로운 테마가 성공적으로 등록되었습니다.
+          {theme.authorNickname || "익명"}님의 테마가 성공적으로 신청되었습니다.
           <br />
           트위터에 공유해서 더 많은 사람들과 함께해보세요!
         </Subtitle>
@@ -243,9 +238,7 @@ export default function FinishModal({
         <ThemePreview>
           <ThemeContent>"{theme.content}"</ThemeContent>
           <AuthorInfo>
-            <AuthorNickname>
-              제안자: {theme.authorNickname || "익명"}
-            </AuthorNickname>
+            <AuthorNickname>{theme.authorNickname || "익명"}</AuthorNickname>
             <AuthorId>{theme.author}</AuthorId>
           </AuthorInfo>
         </ThemePreview>
@@ -253,19 +246,19 @@ export default function FinishModal({
         <ShareInfo>
           <ShareInfoTitle>
             <Share2 size={16} style={{ marginRight: "0.5rem" }} />
-            공유 혜택
+            트위터(X) 공유 혜택
           </ShareInfoTitle>
           <ShareInfoText>
             • 트위터 공유 시 고유한 링크가 생성됩니다
             <br />• 더 많은 사람들이 당신의 테마를 볼 수 있습니다
-            <br />• 오타쿠붐박스 커뮤니티 확산에 기여할 수 있습니다
+            <br />• 오타쿠 붐박스 커뮤니티 확산에 기여할 수 있습니다
           </ShareInfoText>
         </ShareInfo>
 
         <ButtonGroup>
           <Button variant="primary" onClick={handleShare}>
             <Twitter size={18} style={{ marginRight: "0.5rem" }} />
-            트위터에 공유하기
+            트위터(X)에 공유하기
           </Button>
           <Button variant="secondary" onClick={handleClose}>
             나중에 공유하기

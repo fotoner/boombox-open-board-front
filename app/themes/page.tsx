@@ -8,23 +8,21 @@ import {
   EmptyState,
   SectionDescription,
   Button,
-} from "./styles/main.styles";
-import ThemeSubmitModal from "@/components/theme-submit-modal";
-import FinishModal from "@/components/finish-modal";
-import HeroSection from "@/components/HeroSection";
+} from "../styles/main.styles";
 import ThemeCard from "@/components/ThemeCard";
 import type { Theme } from "@/types/theme";
 import { useAuthStore, mockLogin } from "@/store/auth-store";
-import { useAnalytics } from "@/hooks/use-analytics";
+import { getTwitterShareUrl } from "@/app/utils/share";
 import {
+  trackThemeShare,
   trackLogin,
   trackLogout,
-  trackThemeShare,
   trackModalOpen,
 } from "@/lib/gtag";
-import { getTwitterShareUrl } from "@/app/utils/share";
-import { TwitterTweetEmbed } from "react-twitter-embed";
-import { Plus, Twitter } from "lucide-react";
+import { ArrowLeft, Plus, Twitter } from "lucide-react";
+import HeroSection from "@/components/HeroSection";
+import ThemeSubmitModal from "@/components/theme-submit-modal";
+import FinishModal from "@/components/finish-modal";
 
 // 모의 데이터 (닉네임 포함)
 const mockThemes: Theme[] = [
@@ -54,25 +52,18 @@ const mockThemes: Theme[] = [
   },
 ];
 
-// 사용자 목업 데이터
-const mockUserTheme: Theme = {
-  id: "user1",
-  content: "디즈니 클래식 애니메이션 OST 모음",
-  author: "@user",
-  authorNickname: "디즈니러버",
-  createdAt: new Date("2024-01-16T14:20:00"),
-  createdByMe: true,
-};
-
-export default function HomePage() {
-  const { isLoggedIn, user, logout } = useAuthStore();
+export default function ThemesPage() {
+  const { user, isLoggedIn, logout } = useAuthStore();
   const [themes, setThemes] = useState<Theme[]>(mockThemes);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFinishModalOpen, setIsFinishModalOpen] = useState(false);
   const [submittedTheme, setSubmittedTheme] = useState<Theme | null>(null);
 
-  // Google Analytics 페이지뷰 추적
-  useAnalytics();
+  const handleShare = (theme: Theme) => {
+    const twitterUrl = getTwitterShareUrl(theme);
+    trackThemeShare(theme.id, "twitter");
+    window.open(twitterUrl, "_blank");
+  };
 
   const handleLogin = () => {
     mockLogin();
@@ -82,6 +73,11 @@ export default function HomePage() {
   const handleLogout = () => {
     logout();
     trackLogout();
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+    trackModalOpen("theme_submit");
   };
 
   const handleSubmitTheme = (content: string) => {
@@ -101,20 +97,6 @@ export default function HomePage() {
     setIsFinishModalOpen(true);
   };
 
-  const handleShare = (theme: Theme) => {
-    const twitterUrl = getTwitterShareUrl(theme);
-
-    // Google Analytics 이벤트 추적
-    trackThemeShare(theme.id, "twitter");
-
-    window.open(twitterUrl, "_blank");
-  };
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-    trackModalOpen("theme_submit");
-  };
-
   return (
     <Container>
       <HeroSection
@@ -126,57 +108,38 @@ export default function HomePage() {
       />
 
       <MainContent>
-        {isLoggedIn && user && (
-          <>
-            <SectionTitle>이번 2주년에 신청한 테마</SectionTitle>
-            <SectionDescription>
-              이번에 신청하신 테마 목록이에요!!
-            </SectionDescription>
-            <div>
-              {themes.filter((theme) => theme.author === user.id).length > 0 ? (
-                themes
-                  .filter((theme) => theme.author === user.id)
-                  .map((theme) => (
-                    <ThemeCard
-                      key={theme.id}
-                      theme={theme}
-                      isOwn={true}
-                      onShare={handleShare}
-                    />
-                  ))
-              ) : (
-                <ThemeCard
-                  key={mockUserTheme.id}
-                  theme={mockUserTheme}
-                  isOwn={true}
-                  onShare={handleShare}
-                />
-              )}
-            </div>
-          </>
-        )}
+        <SectionTitle>이번 2주년에 신청된 테마들</SectionTitle>
 
-        {/* 특정 트윗 임베드 */}
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "555px",
-            margin: "0 0",
-          }}
-        >
-          <div style={{}}>
-            <TwitterTweetEmbed
-              tweetId="1913559222790558092"
-              options={{ width: 550 }}
-            />
-          </div>
+        <SectionDescription>
+          비슷하거나 같은 테마가 많을 수록 <br />
+          실제 채택될 확률이 높아져요!!!!
+        </SectionDescription>
+
+        <div>
+          {themes.map((theme) => {
+            const isOwn = Boolean(user && theme.author === user.id);
+            return (
+              <ThemeCard
+                key={theme.id}
+                theme={theme}
+                isOwn={isOwn}
+                onShare={handleShare}
+              />
+            );
+          })}
         </div>
+
+        {themes.length === 0 && (
+          <EmptyState>
+            아직 신청된 테마가 없습니다. 첫 번째 테마를 신청해보세요!
+          </EmptyState>
+        )}
 
         <div
           style={{
             display: "flex",
             justifyContent: "center",
-            margin: "1rem 0",
+            margin: "2rem 0",
             gap: "1rem",
           }}
         >
@@ -191,12 +154,6 @@ export default function HomePage() {
               트위터(X)로 로그인
             </Button>
           )}
-          <Button
-            variant="neutral"
-            onClick={() => (window.location.href = "/themes")}
-          >
-            모든 신청 리스트 보기
-          </Button>
         </div>
       </MainContent>
 

@@ -177,7 +177,7 @@ export default function ThemeSubmitModal({
     <Overlay isOpen={isOpen} onClick={handleOverlayClick}>
       <Modal>
         <ModalHeader>
-          <ModalTitle>새 테마 제안하기</ModalTitle>
+          <ModalTitle>새 테마 신청하기</ModalTitle>
           <CloseButton onClick={handleClose}>
             <X size={20} />
           </CloseButton>
@@ -205,7 +205,7 @@ export default function ThemeSubmitModal({
             disabled={!content.trim()}
           >
             <Send size={16} style={{ marginRight: "0.5rem" }} />
-            제안하기
+            신청
           </Button>
         </ButtonGroup>
       </Modal>

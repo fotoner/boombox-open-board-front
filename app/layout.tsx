@@ -8,13 +8,13 @@ import ClientLayout from "@/app/client-layout";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "오타쿠붐박스 오픈 테마 보드",
+  title: "오타쿠 붐박스 - 오픈 테마 보드",
   description:
     "참가자들이 행사 주제를 제안하고 트위터(X)를 통해 확산시키는 커뮤니티 보드",
   keywords: ["오타쿠", "애니메이션", "음악", "테마", "커뮤니티"],
-  authors: [{ name: "오타쿠붐박스" }],
+  authors: [{ name: "오타쿠 붐박스" }],
   openGraph: {
-    title: "오타쿠붐박스 오픈 테마 보드",
+    title: "오타쿠 붐박스 - 오픈 테마 보드",
     description:
       "참가자들이 행사 주제를 제안하고 트위터(X)를 통해 확산시키는 커뮤니티 보드",
     type: "website",
@@ -22,11 +22,11 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "오타쿠붐박스 오픈 테마 보드",
+    title: "오타쿠 붐박스 - 오픈 테마 보드",
     description:
       "참가자들이 행사 주제를 제안하고 트위터(X)를 통해 확산시키는 커뮤니티 보드",
   },
-  generator: "v0.dev",
+  generator: "otaku-bombox",
 };
 
 export default function RootLayout({
