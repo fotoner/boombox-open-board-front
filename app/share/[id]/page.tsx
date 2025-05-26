@@ -33,6 +33,12 @@ const mockThemes: Theme[] = [
   },
 ];
 
+export function generateStaticParams() {
+  return mockThemes.map((theme) => ({
+    id: theme.id,
+  }));
+}
+
 interface SharePageProps {
   params: {
     id: string;
