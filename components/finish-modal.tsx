@@ -246,12 +246,12 @@ export default function FinishModal({
         <ShareInfo>
           <ShareInfoTitle>
             <Share2 size={16} style={{ marginRight: "0.5rem" }} />
-            트위터(X) 공유 혜택
+            트위터(X) 공유를 하면 좋은 점!
           </ShareInfoTitle>
           <ShareInfoText>
-            • 트위터 공유 시 고유한 링크가 생성됩니다
-            <br />• 더 많은 사람들이 당신의 테마를 볼 수 있습니다
-            <br />• 오타쿠 붐박스 커뮤니티 확산에 기여할 수 있습니다
+            • 더 많은 사람들이 나만의 테마를 볼 수 있습니다!
+            <br />• 테마를 공유해 같은 테마 신청을 독려해보세요!!
+            <br />• 공유 이벤트에 당첨될 수 있습니다!!!
           </ShareInfoText>
         </ShareInfo>
 
