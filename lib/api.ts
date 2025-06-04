@@ -1,7 +1,12 @@
 // 환경에 따른 기본 API URL 설정
 const getDefaultApiUrl = () => {
+  if (typeof window !== "undefined") {
+    // 브라우저 환경: 현재 도메인 사용 (상대 경로)
+    return "";
+  }
+  // 서버 환경 (SSR): 개발/프로덕션에 따라 분기
   if (process.env.NODE_ENV === "production") {
-    return "http://localhost"; // 프로덕션: nginx 프록시 사용
+    return "http://localhost"; // SSR에서 서버 간 통신
   }
   return "http://localhost:8080"; // 개발: 직접 백엔드 연결
 };

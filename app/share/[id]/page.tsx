@@ -9,10 +9,10 @@ import { redirect } from "next/navigation";
 // API 호출 함수
 async function getThemeById(themeId: string): Promise<Theme | undefined> {
   try {
-    // 환경에 따른 기본 API URL 설정
+    // 환경에 따른 기본 API URL 설정 (SSR 환경)
     const getDefaultApiUrl = () => {
       if (process.env.NODE_ENV === "production") {
-        return "http://localhost"; // 프로덕션: nginx 프록시 사용
+        return "http://localhost"; // SSR에서 서버 간 통신
       }
       return "http://localhost:8080"; // 개발: 직접 백엔드 연결
     };
