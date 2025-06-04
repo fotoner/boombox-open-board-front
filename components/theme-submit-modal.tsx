@@ -187,12 +187,12 @@ export default function ThemeSubmitModal({
           <Label htmlFor="theme-content">테마 내용</Label>
           <Textarea
             id="theme-content"
-            placeholder="예: 90년대 애니메이션 OST 특집, 스튜디오 지브리 명곡 모음 등..."
+            placeholder="예: 모바일게임, 일상물 애니, 청춘물, 동인음악, 리듬게임, 이세계물, 2D 아이돌, 버츄얼 유튜버 등..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            maxLength={200}
+            maxLength={50}
           />
-          <CharCount>{content.length}/200자</CharCount>
+          <CharCount>{content.length}/50자</CharCount>
         </FormGroup>
 
         <ButtonGroup>

@@ -37,10 +37,32 @@ export default function ThemeCard({ theme, isOwn, onShare }: ThemeCardProps) {
     <StyledThemeCard isOwn={isOwn}>
       <CardHeader>
         <AuthorInfo>
-          <AuthorDetails>
-            <AuthorNickname>{theme.authorNickname || "익명"}</AuthorNickname>
-            <AuthorId>{theme.author}</AuthorId>
-          </AuthorDetails>
+          <a
+            href={`https://x.com/${theme.author}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
+          >
+            <AuthorDetails>
+              <AuthorNickname>{theme.authorNickname || "익명"}</AuthorNickname>
+              <AuthorId
+                style={{
+                  transition: "color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLElement).style.color = "#1da1f2";
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLElement).style.color = "inherit";
+                }}
+              >
+                @{theme.author}
+              </AuthorId>
+            </AuthorDetails>
+          </a>
           {isOwn && <Badge>내 신청</Badge>}
         </AuthorInfo>
       </CardHeader>

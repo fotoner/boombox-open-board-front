@@ -7,6 +7,7 @@ import { Twitter, X, CheckCircle, Share2 } from "lucide-react";
 import type { Theme } from "@/types/theme";
 import { trackThemeShare, trackModalClose } from "@/lib/gtag";
 import { getTwitterShareUrl } from "@/app/utils/share";
+import { User } from "@/types/user";
 
 const Overlay = styled.div<{ isOpen: boolean }>`
   position: fixed;
@@ -183,12 +184,14 @@ interface FinishModalProps {
   isOpen: boolean;
   onClose: () => void;
   theme: Theme | null;
+  user?: User | null;
 }
 
 export default function FinishModal({
   isOpen,
   onClose,
   theme,
+  user,
 }: FinishModalProps) {
   const handleShare = () => {
     if (!theme) return;
@@ -214,6 +217,9 @@ export default function FinishModal({
 
   if (!theme) return null;
 
+  const displayName = user?.nickname || theme?.authorNickname || "익명";
+  const username = user?.id || theme?.author || "";
+
   return (
     <Overlay isOpen={isOpen} onClick={handleOverlayClick}>
       <Modal>
@@ -230,7 +236,7 @@ export default function FinishModal({
 
         <Title>테마 신청 완료!</Title>
         <Subtitle>
-          {theme.authorNickname || "익명"}님의 테마가 성공적으로 신청되었습니다.
+          {displayName}님의 테마가 성공적으로 신청되었습니다.
           <br />
           트위터에 공유해서 더 많은 사람들과 함께해보세요!
         </Subtitle>
@@ -238,8 +244,8 @@ export default function FinishModal({
         <ThemePreview>
           <ThemeContent>"{theme.content}"</ThemeContent>
           <AuthorInfo>
-            <AuthorNickname>{theme.authorNickname || "익명"}</AuthorNickname>
-            <AuthorId>{theme.author}</AuthorId>
+            <AuthorNickname>{displayName}</AuthorNickname>
+            <AuthorId>{username}</AuthorId>
           </AuthorInfo>
         </ThemePreview>
 
@@ -251,7 +257,7 @@ export default function FinishModal({
           <ShareInfoText>
             • 더 많은 사람들이 나만의 테마를 볼 수 있습니다!
             <br />• 테마를 공유해 같은 테마 신청을 독려해보세요!!
-            <br />• 공유 이벤트에 당첨될 수 있습니다!!!
+            <br />• 공유 이벤트에 당첨될지도...?
           </ShareInfoText>
         </ShareInfo>
 

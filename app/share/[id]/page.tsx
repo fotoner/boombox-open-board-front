@@ -4,39 +4,48 @@ import { Clock, Twitter } from "lucide-react";
 import SharePageClient from "./SharePageClient";
 import type { Metadata } from "next";
 import type { Theme } from "@/types/theme";
+import { redirect } from "next/navigation";
 
-// 서버에서만 필요한 데이터
-const mockThemes: Theme[] = [
-  {
-    id: "1",
-    content: "90년대 애니메이션 OST 특집",
-    author: "@anime_lover_90",
-    authorNickname: "90년대키드",
-    createdAt: new Date("2024-01-15T10:30:00"),
-    createdByMe: false,
-  },
-  {
-    id: "2",
-    content: "스튜디오 지브리 명곡 모음",
-    author: "@ghibli_fan",
-    authorNickname: "지브리매니아",
-    createdAt: new Date("2024-01-14T15:20:00"),
-    createdByMe: false,
-  },
-  {
-    id: "3",
-    content: "건담 시리즈 테마곡 메들리",
-    author: "@gundam_pilot",
-    authorNickname: "건담파일럿",
-    createdAt: new Date("2024-01-13T09:45:00"),
-    createdByMe: false,
-  },
-];
+// API 호출 함수
+async function getThemeById(themeId: string): Promise<Theme | undefined> {
+  try {
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+    const response = await fetch(`${baseUrl}/api/themes/${themeId}`, {
+      next: { revalidate: 3600 }, // 1시간 캐시
+    });
 
-export function generateStaticParams() {
-  return mockThemes.map((theme) => ({
-    id: theme.id,
-  }));
+    if (!response.ok) {
+      if (response.status === 404) {
+        return undefined;
+      }
+      throw new Error(`API 호출 실패: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (!result.success || !result.data) {
+      return undefined;
+    }
+
+    const apiData = result.data;
+
+    // API 응답을 Theme 타입으로 변환
+    const theme: Theme = {
+      id: apiData.id.toString(),
+      content: apiData.content,
+      author: apiData.author?.username || "unknown",
+      authorNickname:
+        apiData.author?.name || apiData.author?.username || "unknown",
+      createdAt: new Date(apiData.createdAt),
+      createdByMe: false, // share 페이지에서는 항상 false
+    };
+
+    return theme;
+  } catch (error) {
+    console.error("테마 조회 실패:", error);
+    return undefined;
+  }
 }
 
 interface SharePageProps {
@@ -48,19 +57,29 @@ interface SharePageProps {
 export async function generateMetadata({
   params,
 }: SharePageProps): Promise<Metadata> {
-  const theme = mockThemes.find((t) => t.id === params.id);
+  const theme = await getThemeById(params.id);
 
   if (!theme) {
     return {
       title: "테마를 찾을 수 없습니다 - 오타쿠 붐박스",
       description: "요청하신 테마를 찾을 수 없습니다.",
+      openGraph: {
+        title: "테마를 찾을 수 없습니다 - 오타쿠 붐박스",
+        description: "요청하신 테마를 찾을 수 없습니다.",
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: "테마를 찾을 수 없습니다 - 오타쿠 붐박스",
+        description: "요청하신 테마를 찾을 수 없습니다.",
+      },
     };
   }
 
-  const title = `"${theme.content}" - 오타쿠 붐박스 테마 제안`;
+  const title = `"${theme.content}" - 오타쿠 붐박스 오픈 테마 보드 `;
   const description = `${
     theme.authorNickname || theme.author
-  }님이 제안한 오타쿠 붐박스 테마: ${theme.content}`;
+  }님이 신청한 오타쿠 붐박스 테마: ${theme.content}`;
 
   return {
     title,
@@ -70,6 +89,7 @@ export async function generateMetadata({
       description,
       images: ["/placeholder.svg?height=630&width=1200"],
       type: "website",
+      locale: "ko_KR",
     },
     twitter: {
       card: "summary_large_image",
@@ -80,7 +100,7 @@ export async function generateMetadata({
   };
 }
 
-export default function SharePage({ params }: SharePageProps) {
-  const theme = mockThemes.find((t) => t.id === params.id);
-  return <SharePageClient theme={theme} />;
+export default async function SharePage({ params }: SharePageProps) {
+  // 바로 메인 페이지로 리다이렉트
+  redirect("/");
 }
