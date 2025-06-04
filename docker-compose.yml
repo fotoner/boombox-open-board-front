@@ -5,12 +5,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: boombox-open-board
+    container_name: boombox-open-board-frontend
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
+      # 백엔드 통합 배포시 nginx를 통해 API 호출
+      - NEXT_PUBLIC_API_URL=http://localhost
+    networks:
+      - boombox-network
     restart: unless-stopped
     healthcheck:
       test:
@@ -26,3 +30,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+# 백엔드와 통합할 때 사용할 네트워크
+networks:
+  boombox-network:
+    external: true

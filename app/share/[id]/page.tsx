@@ -9,8 +9,7 @@ import { redirect } from "next/navigation";
 // API 호출 함수
 async function getThemeById(themeId: string): Promise<Theme | undefined> {
   try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
     const response = await fetch(`${baseUrl}/api/themes/${themeId}`, {
       next: { revalidate: 3600 }, // 1시간 캐시
     });

@@ -1,7 +1,7 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-// 백엔드 서버 헬스체크
-export const checkBackendHealth = async (): Promise<boolean> => {
+// API 서버 상태 체크
+export async function checkApiHealth(): Promise<boolean> {
   try {
     const response = await fetch(`${API_BASE_URL}/actuator/health`, {
       method: "GET",
@@ -22,7 +22,7 @@ export const checkBackendHealth = async (): Promise<boolean> => {
     console.error("❌ 백엔드 서버에 연결할 수 없습니다:", error);
     return false;
   }
-};
+}
 
 // 스웨거 UI 접근 가능 여부 확인
 export const checkSwaggerAccess = async (): Promise<boolean> => {
@@ -59,7 +59,7 @@ export const comprehensiveBackendTest = async () => {
 
   // 2. 헬스체크 테스트
   console.log("2️⃣ 헬스체크 테스트...");
-  await checkBackendHealth();
+  await checkApiHealth();
 
   // 3. Swagger UI 접근 테스트
   console.log("3️⃣ Swagger UI 접근 테스트...");
@@ -93,12 +93,12 @@ export const comprehensiveBackendTest = async () => {
 
 // 개발자 도구에서 사용할 수 있도록 전역 함수 등록
 if (typeof window !== "undefined") {
-  (window as any).checkBackendHealth = checkBackendHealth;
+  (window as any).checkApiHealth = checkApiHealth;
   (window as any).checkSwaggerAccess = checkSwaggerAccess;
   (window as any).comprehensiveBackendTest = comprehensiveBackendTest;
 
   console.log("🔧 백엔드 테스트 함수들이 등록되었습니다:");
-  console.log("   - checkBackendHealth(): 헬스체크");
+  console.log("   - checkApiHealth(): 헬스체크");
   console.log("   - checkSwaggerAccess(): Swagger UI 접근 테스트");
   console.log("   - comprehensiveBackendTest(): 종합 테스트");
 }

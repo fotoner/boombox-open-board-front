@@ -2,10 +2,9 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 // API 응답 래퍼 타입
 interface ApiResponse<T> {
-  code: number;
-  message: string;
-  data: T;
   success: boolean;
+  data: T;
+  message?: string;
 }
 
 class ApiClient {
