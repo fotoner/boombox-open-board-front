@@ -99,7 +99,7 @@ export const getCurrentUser = async (): Promise<UserResponse | null> => {
       return null;
     }
 
-    const response = await apiClient.get<UserResponse>("/user/me");
+    const response = await apiClient.get<UserResponse>("/api/user/me");
     console.log(
       "✅ 사용자 정보 조회 성공:",
       response.username,

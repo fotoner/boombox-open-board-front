@@ -1,4 +1,12 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+// 환경에 따른 기본 API URL 설정
+const getDefaultApiUrl = () => {
+  if (process.env.NODE_ENV === "production") {
+    return "http://localhost"; // 프로덕션: nginx 프록시 사용
+  }
+  return "http://localhost:8080"; // 개발: 직접 백엔드 연결
+};
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || getDefaultApiUrl();
 
 // API 서버 상태 체크
 export async function checkApiHealth(): Promise<boolean> {
