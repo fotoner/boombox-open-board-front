@@ -17,11 +17,13 @@ export const metadata: Metadata = {
     description: "붐박스의 테마를 직접 정해보세요!!",
     type: "website",
     locale: "ko_KR",
+    images: ["/image.png"],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "오타쿠 붐박스 - 오픈 테마 보드",
     description: "붐박스의 테마를 직접 정해보세요!!",
+    images: ["/image.png"],
   },
   generator: "otaku-bombox",
 };

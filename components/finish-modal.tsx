@@ -185,6 +185,7 @@ interface FinishModalProps {
   onClose: () => void;
   theme: Theme | null;
   user?: User | null;
+  eventTitle?: string;
 }
 
 export default function FinishModal({
@@ -192,11 +193,12 @@ export default function FinishModal({
   onClose,
   theme,
   user,
+  eventTitle,
 }: FinishModalProps) {
   const handleShare = () => {
     if (!theme) return;
 
-    const twitterUrl = getTwitterShareUrl(theme);
+    const twitterUrl = getTwitterShareUrl(theme, eventTitle);
 
     // Google Analytics 이벤트 추적
     trackThemeShare(theme.id, "twitter");

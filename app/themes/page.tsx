@@ -210,7 +210,7 @@ export default function ThemesPage() {
   };
 
   const handleShare = (theme: Theme) => {
-    const twitterUrl = getTwitterShareUrl(theme);
+    const twitterUrl = getTwitterShareUrl(theme, activeEvent?.title);
     trackThemeShare(theme.id, "twitter");
     window.open(twitterUrl, "_blank");
   };
@@ -409,6 +409,7 @@ export default function ThemesPage() {
         onClose={() => setIsFinishModalOpen(false)}
         theme={submittedTheme}
         user={user}
+        eventTitle={activeEvent?.title}
       />
     </Container>
   );

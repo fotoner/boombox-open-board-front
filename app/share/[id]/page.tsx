@@ -77,11 +77,13 @@ export async function generateMetadata({
         title: "테마를 찾을 수 없습니다 - 오타쿠 붐박스",
         description: "요청하신 테마를 찾을 수 없습니다.",
         type: "website",
+        images: ["/image.png"],
       },
       twitter: {
-        card: "summary_large_image",
+        card: "summary",
         title: "테마를 찾을 수 없습니다 - 오타쿠 붐박스",
         description: "요청하신 테마를 찾을 수 없습니다.",
+        images: ["/image.png"],
       },
     };
   }
@@ -97,15 +99,15 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: ["/placeholder.svg?height=630&width=1200"],
+      images: ["/image.png"],
       type: "website",
       locale: "ko_KR",
     },
     twitter: {
-      card: "summary_large_image",
+      card: "summary",
       title,
       description,
-      images: ["/placeholder.svg?height=630&width=1200"],
+      images: ["/image.png"],
     },
   };
 }

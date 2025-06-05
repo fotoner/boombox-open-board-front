@@ -1,5 +1,5 @@
 // Google Analytics 설정
-export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID || "";
+export const GA_TRACKING_ID = "G-3D60HP7JP2";
 
 // 페이지뷰 추적
 export const pageview = (url: string) => {

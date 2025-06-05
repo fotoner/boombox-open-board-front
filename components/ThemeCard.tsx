@@ -30,6 +30,7 @@ export default function ThemeCard({ theme, isOwn, onShare }: ThemeCardProps) {
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
+      timeZone: "Asia/Seoul",
     }).format(date);
   };
 

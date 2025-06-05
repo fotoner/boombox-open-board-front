@@ -156,7 +156,7 @@ export default function HomePage() {
   };
 
   const handleShare = (theme: Theme) => {
-    const twitterUrl = getTwitterShareUrl(theme);
+    const twitterUrl = getTwitterShareUrl(theme, activeEvent?.title);
 
     // Google Analytics 이벤트 추적
     trackThemeShare(theme.id, "twitter");
@@ -627,7 +627,7 @@ export default function HomePage() {
                       marginBottom: "0.5rem",
                     }}
                   >
-                    테마 신청
+                    테마 신청 (하루 1회)
                   </h4>
                   <p
                     style={{
@@ -639,6 +639,7 @@ export default function HomePage() {
                     원하는 애니메이션, 게임, 컨텐츠 등
                     <br />
                     서브컬처 관련 테마를 신청하세요
+                    <br />* 매일 한 번씩 신청 가능합니다!
                   </p>
                 </div>
 
@@ -957,6 +958,7 @@ export default function HomePage() {
         onClose={() => setIsFinishModalOpen(false)}
         theme={submittedTheme}
         user={user}
+        eventTitle={activeEvent?.title}
       />
     </Container>
   );
