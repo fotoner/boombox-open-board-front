@@ -1,18 +1,20 @@
-// 환경에 따른 기본 API URL 설정
-const getDefaultApiUrl = () => {
-  if (typeof window !== "undefined") {
-    // 브라우저 환경: 현재 도메인 사용 (상대 경로)
-    return "";
+// 환경에 따른 API URL 설정
+const getApiBaseUrl = () => {
+  // 환경변수가 있으면 우선 사용
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
   }
-  // 서버 환경 (SSR): 개발/프로덕션에 따라 분기
+
+  // 프로덕션이면 실제 도메인 사용
   if (process.env.NODE_ENV === "production") {
-    return "http://localhost"; // SSR에서 서버 간 통신
+    return "https://boombox.fotone.moe";
   }
-  return "http://localhost:8080"; // 개발: 직접 백엔드 연결
+
+  // 개발환경에서는 localhost:8080
+  return "http://localhost:8080";
 };
 
-// 클라이언트 사이드에서는 상대 경로 사용
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
+const API_BASE_URL = getApiBaseUrl();
 
 // API 응답 래퍼 타입
 interface ApiResponse<T> {

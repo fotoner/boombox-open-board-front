@@ -9,15 +9,23 @@ import { redirect } from "next/navigation";
 // API 호출 함수
 async function getThemeById(themeId: string): Promise<Theme | undefined> {
   try {
-    // 환경에 따른 기본 API URL 설정 (SSR 환경)
-    const getDefaultApiUrl = () => {
-      if (process.env.NODE_ENV === "production") {
-        return "http://localhost"; // SSR에서 서버 간 통신
+    // 환경에 따른 API URL 설정
+    const getApiBaseUrl = () => {
+      // 환경변수가 있으면 우선 사용
+      if (process.env.NEXT_PUBLIC_API_URL) {
+        return process.env.NEXT_PUBLIC_API_URL;
       }
-      return "http://localhost:8080"; // 개발: 직접 백엔드 연결
+
+      // 프로덕션이면 실제 도메인 사용
+      if (process.env.NODE_ENV === "production") {
+        return "https://boombox.fotone.moe";
+      }
+
+      // 개발환경에서는 localhost:8080
+      return "http://localhost:8080";
     };
 
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || getDefaultApiUrl();
+    const baseUrl = getApiBaseUrl();
     const response = await fetch(`${baseUrl}/api/themes/${themeId}`, {
       next: { revalidate: 3600 }, // 1시간 캐시
     });
