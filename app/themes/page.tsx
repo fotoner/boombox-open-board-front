@@ -43,15 +43,8 @@ async function getThemes(
   currentPage: number;
 }> {
   try {
-    // 환경에 따른 기본 API URL 설정 (SSR 환경)
-    const getDefaultApiUrl = () => {
-      if (process.env.NODE_ENV === "production") {
-        return "http://localhost"; // SSR에서 서버 간 통신
-      }
-      return "http://localhost:8080"; // 개발: 직접 백엔드 연결
-    };
-
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || getDefaultApiUrl();
+    // 클라이언트 사이드에서는 상대 경로 사용
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
     const response = await fetch(
       `${baseUrl}/api/themes?eventId=${eventId}&page=${page}&size=${size}&sort=createdAt,desc`
     );

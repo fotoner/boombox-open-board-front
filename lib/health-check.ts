@@ -11,7 +11,8 @@ const getDefaultApiUrl = () => {
   return "http://localhost:8080"; // 개발: 직접 백엔드 연결
 };
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || getDefaultApiUrl();
+// 클라이언트 사이드에서는 상대 경로 사용
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 // API 서버 상태 체크
 export async function checkApiHealth(): Promise<boolean> {
