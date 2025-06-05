@@ -24,14 +24,17 @@ interface ThemeCardProps {
 export default function ThemeCard({ theme, isOwn, onShare }: ThemeCardProps) {
   const isMobile = useIsMobile();
   const formatDate = (date: Date) => {
+    // UTC 시간을 한국 시간(GMT+9)으로 변환
+    const utcTime = date.getTime();
+    const koreanTime = new Date(utcTime + 9 * 60 * 60 * 1000); // UTC + 9시간
+
     return new Intl.DateTimeFormat("ko-KR", {
       year: "numeric",
       month: "long",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      timeZone: "Asia/Seoul",
-    }).format(date);
+    }).format(koreanTime);
   };
 
   return (
