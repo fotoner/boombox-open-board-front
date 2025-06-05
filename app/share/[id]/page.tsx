@@ -69,6 +69,13 @@ export async function generateMetadata({
 }: SharePageProps): Promise<Metadata> {
   const theme = await getThemeById(params.id);
 
+  // 절대 URL 생성
+  const baseUrl =
+    process.env.NODE_ENV === "production"
+      ? "https://boombox.fotone.moe"
+      : "http://localhost:3000";
+  const imageUrl = `${baseUrl}/image.png`;
+
   if (!theme) {
     return {
       title: "테마를 찾을 수 없습니다 - 오타쿠 붐박스",
@@ -77,13 +84,13 @@ export async function generateMetadata({
         title: "테마를 찾을 수 없습니다 - 오타쿠 붐박스",
         description: "요청하신 테마를 찾을 수 없습니다.",
         type: "website",
-        images: ["/image.png"],
+        images: [imageUrl],
       },
       twitter: {
         card: "summary",
         title: "테마를 찾을 수 없습니다 - 오타쿠 붐박스",
         description: "요청하신 테마를 찾을 수 없습니다.",
-        images: ["/image.png"],
+        images: [imageUrl],
       },
     };
   }
@@ -99,7 +106,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: ["/image.png"],
+      images: [imageUrl],
       type: "website",
       locale: "ko_KR",
     },
@@ -107,7 +114,7 @@ export async function generateMetadata({
       card: "summary",
       title,
       description,
-      images: ["/image.png"],
+      images: [imageUrl],
     },
   };
 }

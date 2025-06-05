@@ -7,6 +7,13 @@ import ClientLayout from "@/app/client-layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// 절대 URL 생성
+const baseUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://boombox.fotone.moe"
+    : "http://localhost:3000";
+const imageUrl = `${baseUrl}/image.png`;
+
 export const metadata: Metadata = {
   title: "오타쿠 붐박스 - 오픈 테마 보드",
   description: "붐박스의 테마를 직접 정해보세요!!",
@@ -17,13 +24,13 @@ export const metadata: Metadata = {
     description: "붐박스의 테마를 직접 정해보세요!!",
     type: "website",
     locale: "ko_KR",
-    images: ["/image.png"],
+    images: [imageUrl],
   },
   twitter: {
     card: "summary",
     title: "오타쿠 붐박스 - 오픈 테마 보드",
     description: "붐박스의 테마를 직접 정해보세요!!",
-    images: ["/image.png"],
+    images: [imageUrl],
   },
   generator: "otaku-bombox",
 };
