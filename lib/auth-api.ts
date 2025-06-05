@@ -65,7 +65,7 @@ export const login = async (
     });
 
     const response = await apiClient.post<LoginResponse>(
-      "/auth/login",
+      "/api/auth/login",
       request
     );
 
