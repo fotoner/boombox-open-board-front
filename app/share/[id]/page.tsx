@@ -9,13 +9,8 @@ import { redirect } from "next/navigation";
 // API 호출 함수
 async function getThemeById(themeId: string): Promise<Theme | undefined> {
   try {
-    // 환경에 따른 API URL 설정
+    // 환경에 따른 API URL 설정 (환경변수 무시)
     const getApiBaseUrl = () => {
-      // 환경변수가 있으면 우선 사용
-      if (process.env.NEXT_PUBLIC_API_URL) {
-        return process.env.NEXT_PUBLIC_API_URL;
-      }
-
       // 프로덕션이면 실제 도메인 사용
       if (process.env.NODE_ENV === "production") {
         return "https://boombox.fotone.moe";
