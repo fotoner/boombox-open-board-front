@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   MainContent,
@@ -109,6 +109,48 @@ export default function ThemesPage() {
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  // fetchThemes 함수를 useCallback으로 감싸서 메모이제이션
+  const fetchThemes = useCallback(
+    async (page: number = 0, reset: boolean = false) => {
+      if (!activeEvent) return;
+
+      if (reset) {
+        setIsLoadingThemes(true);
+      } else {
+        setIsLoadingMore(true);
+      }
+
+      try {
+        const result = await getThemes(activeEvent.id, page);
+
+        if (reset) {
+          setThemes(result.themes);
+          setCurrentPage(result.currentPage);
+        } else {
+          setThemes((prev) => [...prev, ...result.themes]);
+          setCurrentPage(result.currentPage);
+        }
+
+        setTotalPages(result.totalPages);
+        setTotalElements(result.totalElements);
+        setHasMore(result.currentPage + 1 < result.totalPages);
+      } catch (error) {
+        console.error("Failed to fetch themes:", error);
+      } finally {
+        setIsLoadingThemes(false);
+        setIsLoadingMore(false);
+      }
+    },
+    [activeEvent]
+  );
+
+  // loadMoreThemes 함수를 useCallback으로 감싸서 메모이제이션
+  const loadMoreThemes = useCallback(() => {
+    if (!isLoadingMore && hasMore) {
+      fetchThemes(currentPage + 1, false);
+    }
+  }, [isLoadingMore, hasMore, currentPage, fetchThemes]);
+
   // 컴포넌트 마운트 시 인증 상태 초기화
   useEffect(() => {
     initializeAuth();
@@ -133,7 +175,18 @@ export default function ThemesPage() {
     if (activeEvent) {
       fetchThemes(0, true); // 첫 페이지부터 시작, 초기화
     }
-  }, [activeEvent]);
+  }, [activeEvent, fetchThemes]);
+
+  const checkCanCreateToday = useCallback(async () => {
+    if (!isLoggedIn) return;
+
+    try {
+      const canCreate = await canCreateThemeToday();
+      setCanCreateToday(canCreate);
+    } catch (error) {
+      console.error("Failed to check can create today:", error);
+    }
+  }, [isLoggedIn]);
 
   // 로그인 상태가 변경되면 생성 가능 여부 확인
   useEffect(() => {
@@ -142,7 +195,7 @@ export default function ThemesPage() {
     } else {
       setCanCreateToday(true);
     }
-  }, [isLoggedIn, user]);
+  }, [isLoggedIn, user, checkCanCreateToday]);
 
   // 스크롤 이벤트 리스너
   useEffect(() => {
@@ -159,55 +212,7 @@ export default function ThemesPage() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isLoadingMore, hasMore, currentPage]);
-
-  const fetchThemes = async (page: number = 0, reset: boolean = false) => {
-    if (!activeEvent) return;
-
-    if (reset) {
-      setIsLoadingThemes(true);
-    } else {
-      setIsLoadingMore(true);
-    }
-
-    try {
-      const result = await getThemes(activeEvent.id, page);
-
-      if (reset) {
-        setThemes(result.themes);
-        setCurrentPage(0);
-      } else {
-        setThemes((prev) => [...prev, ...result.themes]);
-        setCurrentPage(page);
-      }
-
-      setTotalPages(result.totalPages);
-      setTotalElements(result.totalElements);
-      setHasMore(page + 1 < result.totalPages);
-    } catch (error) {
-      console.error("Failed to fetch themes:", error);
-    } finally {
-      setIsLoadingThemes(false);
-      setIsLoadingMore(false);
-    }
-  };
-
-  const loadMoreThemes = () => {
-    if (!isLoadingMore && hasMore) {
-      fetchThemes(currentPage + 1, false);
-    }
-  };
-
-  const checkCanCreateToday = async () => {
-    if (!isLoggedIn) return;
-
-    try {
-      const canCreate = await canCreateThemeToday();
-      setCanCreateToday(canCreate);
-    } catch (error) {
-      console.error("Failed to check can create today:", error);
-    }
-  };
+  }, [isLoadingMore, hasMore, loadMoreThemes]);
 
   const handleShare = (theme: Theme) => {
     const twitterUrl = getTwitterShareUrl(theme, activeEvent?.title);

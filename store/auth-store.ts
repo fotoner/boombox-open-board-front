@@ -20,25 +20,6 @@ interface AuthState {
   startLogin: () => Promise<void>;
 }
 
-// 목업 유저 데이터
-const mockUsers: User[] = [
-  {
-    id: "@otaku_master",
-    nickname: "오타쿠마스터",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    id: "@anime_lover_2024",
-    nickname: "애니러버",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    id: "@ghibli_dreamer",
-    nickname: "지브리꿈나무",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-];
-
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
