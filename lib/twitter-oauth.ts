@@ -91,7 +91,7 @@ export const createTwitterOAuthUrl = async (): Promise<string> => {
     code_challenge_method: "S256",
   });
 
-  return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
+  return `https://x.com/i/oauth2/authorize?${params.toString()}`;
 };
 
 // 로그인 리다이렉트에서 인증 코드 추출
