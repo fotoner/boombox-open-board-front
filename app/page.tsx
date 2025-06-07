@@ -23,8 +23,8 @@ import {
   trackModalOpen,
 } from "@/lib/gtag";
 import { getTwitterShareUrl } from "@/app/utils/share";
-import { TwitterTweetEmbed, TwitterTimelineEmbed } from "react-twitter-embed";
-import { Plus, Twitter } from "lucide-react";
+import { TwitterTweetEmbed } from "react-twitter-embed";
+import { Plus, Twitter, Calendar, Users } from "lucide-react";
 import {
   getMyThemes,
   createTheme,
@@ -33,13 +33,6 @@ import {
 } from "@/lib/theme-api";
 import type { EventResponse } from "@/lib/theme-api";
 import { isAdmin, canCreateThemes } from "@/types/user";
-
-// 개발 환경에서 API 테스트 유틸리티 로드
-if (process.env.NODE_ENV === "development") {
-  import("@/lib/api-test");
-  import("@/lib/health-check");
-  import("@/lib/oauth-test");
-}
 
 export default function HomePage() {
   const { isLoggedIn, user, logout, initializeAuth, isLoading, startLogin } =
@@ -905,68 +898,48 @@ export default function HomePage() {
               style={{
                 width: "100%",
                 overflow: "hidden",
-                borderRadius: "8px",
-                border: "1px solid #e5e7eb",
+                borderRadius: "12px",
+                backgroundColor: "#ffffff",
+                minHeight: "400px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                border: "1px solid #eff3f4",
               }}
             >
-              <TwitterTimelineEmbed
-                sourceType="profile"
-                screenName="OTAKU_BOOMBOX"
-                options={{
-                  height: 400,
-                  width: twitterEmbedWidth,
-                  chrome: "noheader,nofooter,noborders",
-                  theme: "light",
-                  borderColor: "#e1e8ed",
-                  lang: "ko",
+              <div
+                style={{
+                  width: "100%",
+                  maxWidth: `${twitterEmbedWidth}px`,
+                  height: "400px",
+                  overflow: "auto",
+                  borderRadius: "12px",
+                  backgroundColor: "#f8f9fa",
+                  // 스크롤바 완전히 숨기기
+                  scrollbarWidth: "none", // Firefox
+                  msOverflowStyle: "none", // IE/Edge
                 }}
-                placeholder={
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "400px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "#f8f9fa",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "8px",
-                      flexDirection: "column",
-                      gap: "1rem",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        border: "4px solid #e3e3e3",
-                        borderTop: "4px solid #1da1f2",
-                        borderRadius: "50%",
-                        animation: "spin 1s linear infinite",
-                      }}
-                    />
-                    <style jsx>{`
-                      @keyframes spin {
-                        0% {
-                          transform: rotate(0deg);
-                        }
-                        100% {
-                          transform: rotate(360deg);
-                        }
-                      }
-                    `}</style>
-                    <p
-                      style={{
-                        color: "#6b7280",
-                        fontSize: "0.9rem",
-                        margin: 0,
-                      }}
-                    >
-                      트위터 타임라인 로딩 중...
-                    </p>
-                  </div>
-                }
-              />
+                className="hidden-scrollbar"
+              >
+                <iframe
+                  src={`https://syndication.twitter.com/srv/timeline-profile/screen-name/OTAKU_BOOMBOX?height=600&width=${twitterEmbedWidth}&chrome=noheader%20nofooter%20noborders&theme=light&lang=ko&dnt=false&related=twitterapi%2Ctwitter&partner=&profile_id=`}
+                  width={twitterEmbedWidth}
+                  height="600"
+                  style={{
+                    border: "none",
+                    maxWidth: "100%",
+                    backgroundColor: "transparent",
+                    overflow: "hidden",
+                  }}
+                  allow="encrypted-media"
+                  title="트위터 타임라인"
+                />
+                <style jsx>{`
+                  .hidden-scrollbar::-webkit-scrollbar {
+                    display: none; /* Chrome, Safari, Opera */
+                  }
+                `}</style>
+              </div>
             </div>
           </div>
         )}
