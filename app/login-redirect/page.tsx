@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
-import { extractAuthCodeFromUrl, clearOAuthParams } from "@/lib/twitter-oauth";
+import {
+  extractAuthCodeFromUrl,
+  validateState,
+  clearOAuthParams,
+} from "@/lib/twitter-oauth";
 
 export default function LoginRedirectPage() {
   const router = useRouter();
@@ -17,7 +21,7 @@ export default function LoginRedirectPage() {
     const handleOAuthCallback = async () => {
       try {
         // URL에서 인증 코드 추출
-        const { code, error } = extractAuthCodeFromUrl();
+        const { code, state, error } = extractAuthCodeFromUrl();
 
         if (error) {
           throw new Error(`OAuth 오류: ${error}`);
@@ -27,8 +31,22 @@ export default function LoginRedirectPage() {
           throw new Error("인증 코드가 없습니다.");
         }
 
-        // sessionStorage에서 codeVerifier 가져오기
-        const codeVerifier = sessionStorage.getItem("oauth_code_verifier");
+        if (!state) {
+          throw new Error("State 파라미터가 없습니다.");
+        }
+
+        // localStorage 기반 state 검증 (브라우저 전환 대응)
+        const validation = validateState(state);
+        if (!validation.isValid) {
+          throw new Error(
+            validation.error || "State 검증 실패. 보안상 로그인을 중단합니다."
+          );
+        }
+
+        // sessionStorage나 localStorage에서 codeVerifier 가져오기 (브라우저 전환 대응)
+        const codeVerifier =
+          sessionStorage.getItem("oauth_code_verifier") ||
+          localStorage.getItem("oauth_code_verifier");
         if (!codeVerifier) {
           throw new Error("Code Verifier가 없습니다. PKCE 플로우 오류입니다.");
         }
@@ -36,18 +54,19 @@ export default function LoginRedirectPage() {
         console.log("🔐 OAuth 콜백 처리:", {
           code: code.substring(0, 10) + "...",
           codeVerifier: codeVerifier.substring(0, 10) + "...",
+          state: state.substring(0, 10) + "...",
         });
 
         setMessage("백엔드 서버에 로그인 요청 중...");
 
         // 백엔드로 인증 코드와 codeVerifier 전송 (PKCE 플로우)
-        // Authorization Code + PKCE로 충분한 보안 제공
+        // Authorization Code + PKCE + State로 3중 보안 제공
         await login(code, codeVerifier);
 
         setStatus("success");
         setMessage("로그인 성공! 메인 페이지로 이동합니다...");
 
-        // OAuth 파라미터 정리
+        // OAuth 파라미터 정리 (localStorage도 함께)
         clearOAuthParams();
 
         // 메인 페이지로 리다이렉트
@@ -63,7 +82,7 @@ export default function LoginRedirectPage() {
             : "로그인 중 오류가 발생했습니다.";
         setMessage(errorMessage);
 
-        // OAuth 파라미터 정리
+        // OAuth 파라미터 정리 (localStorage도 함께)
         clearOAuthParams();
 
         // 5초 후 메인 페이지로 리다이렉트

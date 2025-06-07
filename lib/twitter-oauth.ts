@@ -74,9 +74,10 @@ export const createTwitterOAuthUrl = async (): Promise<string> => {
   const state = generateState();
   const redirectUri = getRedirectUri();
 
-  // PKCE 파라미터들을 sessionStorage에 저장
-  sessionStorage.setItem("oauth_code_verifier", codeVerifier);
-  sessionStorage.setItem("oauth_state", state);
+  // 모바일 브라우저 전환 문제 해결을 위해 localStorage 사용
+  // (사용 후 즉시 삭제하여 보안 위험 최소화)
+  localStorage.setItem("oauth_code_verifier", codeVerifier);
+  localStorage.setItem("oauth_state", state);
 
   // 디버깅을 위해 리다이렉트 URI도 로그 출력
   console.log("🔗 OAuth 리다이렉트 URI:", redirectUri);
@@ -91,7 +92,7 @@ export const createTwitterOAuthUrl = async (): Promise<string> => {
     code_challenge_method: "S256",
   });
 
-  return `https://x.com/i/oauth2/authorize?${params.toString()}`;
+  return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
 };
 
 // 로그인 리다이렉트에서 인증 코드 추출
@@ -107,7 +108,7 @@ export const extractAuthCodeFromUrl = (
   };
 };
 
-// state 검증 (개선된 버전)
+// state 검증 (개선된 버전 - localStorage 지원)
 export const validateState = (
   receivedState: string
 ): {
@@ -117,7 +118,10 @@ export const validateState = (
   debugInfo?: any;
 } => {
   try {
-    const storedState = sessionStorage.getItem("oauth_state");
+    // sessionStorage와 localStorage 모두 확인 (브라우저 전환 대응)
+    const storedState =
+      sessionStorage.getItem("oauth_state") ||
+      localStorage.getItem("oauth_state");
 
     if (storedState === receivedState) {
       // 성공 시 애널리틱스 추적
@@ -127,9 +131,12 @@ export const validateState = (
 
     // 실패 시 디버깅 정보 수집
     const debugInfo = collectDebugInfo();
+
     console.warn("🚨 OAuth State 검증 실패", {
       received: receivedState,
       stored: storedState,
+      sessionStorage: sessionStorage.getItem("oauth_state"),
+      localStorage: localStorage.getItem("oauth_state"),
       ...debugInfo,
     });
 
@@ -140,6 +147,8 @@ export const validateState = (
         ? receivedState.substring(0, 5) + "..."
         : "null",
       storedState: storedState ? storedState.substring(0, 5) + "..." : "null",
+      fromSessionStorage: !!sessionStorage.getItem("oauth_state"),
+      fromLocalStorage: !!localStorage.getItem("oauth_state"),
     });
 
     // 모바일 환경에서의 사용자 친화적 오류 메시지
@@ -178,8 +187,11 @@ export const validateState = (
 // 강화된 OAuth 파라미터 정리
 export const clearOAuthParams = (): void => {
   try {
+    // sessionStorage와 localStorage 모두 정리
     sessionStorage.removeItem("oauth_code_verifier");
     sessionStorage.removeItem("oauth_state");
+    localStorage.removeItem("oauth_code_verifier");
+    localStorage.removeItem("oauth_state");
     console.log("✅ OAuth 파라미터 정리 완료");
   } catch (error) {
     console.warn("OAuth 파라미터 정리 중 오류:", error);
