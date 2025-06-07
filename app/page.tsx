@@ -51,6 +51,7 @@ export default function HomePage() {
   const [activeEvent, setActiveEvent] = useState<EventResponse | null>(null);
   const [canCreateToday, setCanCreateToday] = useState(true);
   const [isLoadingThemes, setIsLoadingThemes] = useState(false);
+  const [twitterEmbedWidth, setTwitterEmbedWidth] = useState(550);
 
   // Google Analytics 페이지뷰 추적
   useAnalytics();
@@ -84,6 +85,27 @@ export default function HomePage() {
       setCanCreateToday(true);
     }
   }, [isLoggedIn, user]);
+
+  // 트위터 임베드 반응형 너비 계산
+  useEffect(() => {
+    const calculateTwitterWidth = () => {
+      if (typeof window !== "undefined") {
+        const screenWidth = window.innerWidth;
+        if (screenWidth < 576) {
+          // 모바일: 화면 너비에서 여백 40px 제외, 최대 500px
+          setTwitterEmbedWidth(Math.min(screenWidth - 40, 500));
+        } else {
+          // 데스크톱: 고정 550px
+          setTwitterEmbedWidth(550);
+        }
+      }
+    };
+
+    calculateTwitterWidth();
+    window.addEventListener("resize", calculateTwitterWidth);
+
+    return () => window.removeEventListener("resize", calculateTwitterWidth);
+  }, []);
 
   const fetchMyThemes = async () => {
     if (!isLoggedIn) return;
@@ -879,15 +901,73 @@ export default function HomePage() {
                 최신 소식과 이벤트 정보를 확인하세요
               </p>
             </div>
-            <TwitterTimelineEmbed
-              sourceType="profile"
-              screenName="OTAKU_BOOMBOX"
-              options={{
-                height: 400,
-                width: 550,
-                chrome: "noheader,nofooter,noborders",
+            <div
+              style={{
+                width: "100%",
+                overflow: "hidden",
+                borderRadius: "8px",
+                border: "1px solid #e5e7eb",
               }}
-            />
+            >
+              <TwitterTimelineEmbed
+                sourceType="profile"
+                screenName="OTAKU_BOOMBOX"
+                options={{
+                  height: 400,
+                  width: twitterEmbedWidth,
+                  chrome: "noheader,nofooter,noborders",
+                  theme: "light",
+                  borderColor: "#e1e8ed",
+                  lang: "ko",
+                }}
+                placeholder={
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "400px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#f8f9fa",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                      flexDirection: "column",
+                      gap: "1rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                        border: "4px solid #e3e3e3",
+                        borderTop: "4px solid #1da1f2",
+                        borderRadius: "50%",
+                        animation: "spin 1s linear infinite",
+                      }}
+                    />
+                    <style jsx>{`
+                      @keyframes spin {
+                        0% {
+                          transform: rotate(0deg);
+                        }
+                        100% {
+                          transform: rotate(360deg);
+                        }
+                      }
+                    `}</style>
+                    <p
+                      style={{
+                        color: "#6b7280",
+                        fontSize: "0.9rem",
+                        margin: 0,
+                      }}
+                    >
+                      트위터 타임라인 로딩 중...
+                    </p>
+                  </div>
+                }
+              />
+            </div>
           </div>
         )}
 
