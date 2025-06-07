@@ -7,15 +7,49 @@ import {
   extractAuthCodeFromUrl,
   validateState,
   clearOAuthParams,
+  startTwitterLogin,
 } from "@/lib/twitter-oauth";
+import { trackOAuthRetry } from "@/lib/gtag";
 
 export default function LoginRedirectPage() {
   const router = useRouter();
   const { login } = useAuthStore();
-  const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading"
-  );
+  const [status, setStatus] = useState<
+    "loading" | "success" | "error" | "retrying"
+  >("loading");
   const [message, setMessage] = useState("로그인 처리 중...");
+  const [retryCount, setRetryCount] = useState(0);
+
+  const handleRetry = async () => {
+    if (retryCount >= 2) {
+      setMessage(
+        "재시도 횟수를 초과했습니다. 메인 페이지에서 다시 로그인해주세요."
+      );
+      setTimeout(() => router.push("/"), 3000);
+      return;
+    }
+
+    // 재시도 애널리틱스 추적
+    const isMobileDevice =
+      /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+    trackOAuthRetry(retryCount + 1, isMobileDevice);
+
+    setStatus("retrying");
+    setMessage("다시 로그인을 시도합니다...");
+    setRetryCount((prev) => prev + 1);
+
+    try {
+      clearOAuthParams();
+      await startTwitterLogin();
+    } catch (error) {
+      console.error("재시도 실패:", error);
+      setStatus("error");
+      setMessage("재시도에 실패했습니다. 메인 페이지에서 다시 시도해주세요.");
+      setTimeout(() => router.push("/"), 3000);
+    }
+  };
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
@@ -35,9 +69,24 @@ export default function LoginRedirectPage() {
           throw new Error("State 파라미터가 없습니다.");
         }
 
-        // state 검증
-        if (!validateState(state)) {
-          throw new Error("State 검증 실패. 보안상 로그인을 중단합니다.");
+        // 개선된 state 검증
+        const validation = validateState(state);
+        if (!validation.isValid) {
+          // 모바일에서의 자동 재시도 로직
+          if (validation.shouldRetry && retryCount === 0) {
+            setStatus("error");
+            setMessage(validation.error || "State 검증 실패");
+
+            // 3초 후 자동 재시도
+            setTimeout(() => {
+              handleRetry();
+            }, 3000);
+            return;
+          } else {
+            throw new Error(
+              validation.error || "State 검증 실패. 보안상 로그인을 중단합니다."
+            );
+          }
         }
 
         // sessionStorage에서 codeVerifier 가져오기
@@ -70,19 +119,19 @@ export default function LoginRedirectPage() {
       } catch (error) {
         console.error("로그인 처리 실패:", error);
         setStatus("error");
-        setMessage(
+        const errorMessage =
           error instanceof Error
             ? error.message
-            : "로그인 중 오류가 발생했습니다."
-        );
+            : "로그인 중 오류가 발생했습니다.";
+        setMessage(errorMessage);
 
         // OAuth 파라미터 정리
         clearOAuthParams();
 
-        // 3초 후 메인 페이지로 리다이렉트
+        // 5초 후 메인 페이지로 리다이렉트
         setTimeout(() => {
           router.push("/");
-        }, 3000);
+        }, 5000);
       }
     };
 
@@ -90,7 +139,7 @@ export default function LoginRedirectPage() {
     if (typeof window !== "undefined") {
       handleOAuthCallback();
     }
-  }, [login, router]);
+  }, [login, router, retryCount]);
 
   return (
     <div
@@ -113,7 +162,7 @@ export default function LoginRedirectPage() {
           boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
         }}
       >
-        {status === "loading" && (
+        {(status === "loading" || status === "retrying") && (
           <>
             <div
               style={{
@@ -168,28 +217,55 @@ export default function LoginRedirectPage() {
         >
           {status === "loading"
             ? "로그인 처리 중"
+            : status === "retrying"
+            ? "다시 시도 중"
             : status === "success"
             ? "로그인 성공"
             : "로그인 실패"}
         </h2>
 
-        <p style={{ margin: "0", color: "#666" }}>{message}</p>
+        <p style={{ margin: "0 0 1rem 0", color: "#666" }}>{message}</p>
+
+        {retryCount > 0 && (
+          <p
+            style={{ margin: "0 0 1rem 0", color: "#888", fontSize: "0.9rem" }}
+          >
+            재시도 {retryCount}/2
+          </p>
+        )}
 
         {status === "error" && (
-          <button
-            onClick={() => router.push("/")}
-            style={{
-              marginTop: "1rem",
-              padding: "0.5rem 1rem",
-              backgroundColor: "#1da1f2",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+          <div
+            style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}
           >
-            메인 페이지로 돌아가기
-          </button>
+            <button
+              onClick={handleRetry}
+              disabled={retryCount >= 2}
+              style={{
+                padding: "0.5rem 1rem",
+                backgroundColor: retryCount >= 2 ? "#ccc" : "#28a745",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: retryCount >= 2 ? "not-allowed" : "pointer",
+              }}
+            >
+              다시 시도
+            </button>
+            <button
+              onClick={() => router.push("/")}
+              style={{
+                padding: "0.5rem 1rem",
+                backgroundColor: "#1da1f2",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              메인으로
+            </button>
+          </div>
         )}
       </div>
     </div>

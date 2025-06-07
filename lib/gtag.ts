@@ -78,3 +78,50 @@ export const trackModalClose = (modalType: string) => {
     label: modalType,
   });
 };
+
+// OAuth 관련 추적 이벤트들
+export const trackOAuthStateValidationFailed = (debugInfo: any) => {
+  event({
+    action: "oauth_state_validation_failed",
+    category: "auth_error",
+    label: JSON.stringify({
+      isMobile: debugInfo.isMobile,
+      userAgent: debugInfo.userAgent?.substring(0, 100), // 길이 제한
+      hasSessionStorage: debugInfo.hasSessionStorage,
+      timestamp: debugInfo.timestamp,
+    }),
+  });
+};
+
+export const trackOAuthRetry = (retryCount: number, isMobile: boolean) => {
+  event({
+    action: "oauth_retry",
+    category: "auth_error",
+    label: `retry_${retryCount}_mobile_${isMobile}`,
+    value: retryCount,
+  });
+};
+
+export const trackOAuthSuccess = (method = "twitter") => {
+  event({
+    action: "oauth_success",
+    category: "auth",
+    label: method,
+  });
+};
+
+export const trackOAuthError = (
+  errorType: string,
+  errorMessage: string,
+  debugInfo?: any
+) => {
+  event({
+    action: "oauth_error",
+    category: "auth_error",
+    label: JSON.stringify({
+      type: errorType,
+      message: errorMessage.substring(0, 100), // 길이 제한
+      isMobile: debugInfo?.isMobile || false,
+    }),
+  });
+};
