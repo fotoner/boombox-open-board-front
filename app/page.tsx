@@ -855,15 +855,14 @@ export default function HomePage() {
           <div
             style={{
               width: "100%",
-              maxWidth: "555px",
-              margin: "2rem 0",
+              maxWidth: "550px",
+              margin: "2rem auto 0",
             }}
           >
             <div
               style={{
                 textAlign: "center",
-                marginBottom: "1rem",
-                padding: "1rem",
+                marginBottom: "1.5rem",
               }}
             >
               <div
@@ -894,53 +893,55 @@ export default function HomePage() {
                 최신 소식과 이벤트 정보를 확인하세요
               </p>
             </div>
-            <div
-              style={{
-                width: "100%",
-                overflow: "hidden",
-                borderRadius: "12px",
-                backgroundColor: "#ffffff",
-                minHeight: "400px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "1px solid #eff3f4",
-              }}
-            >
-              <div
-                style={{
-                  width: "100%",
-                  maxWidth: `${twitterEmbedWidth}px`,
-                  height: "400px",
-                  overflow: "auto",
-                  borderRadius: "12px",
-                  backgroundColor: "#f8f9fa",
-                  // 스크롤바 완전히 숨기기
-                  scrollbarWidth: "none", // Firefox
-                  msOverflowStyle: "none", // IE/Edge
-                }}
-                className="hidden-scrollbar"
-              >
-                <iframe
-                  src={`https://syndication.twitter.com/srv/timeline-profile/screen-name/OTAKU_BOOMBOX?height=600&width=${twitterEmbedWidth}&chrome=noheader%20nofooter%20noborders&theme=light&lang=ko&dnt=false&related=twitterapi%2Ctwitter&partner=&profile_id=`}
-                  width={twitterEmbedWidth}
-                  height="600"
+            <TwitterTweetEmbed
+              tweetId="1930550203633086657"
+              placeholder={
+                <div
                   style={{
-                    border: "none",
-                    maxWidth: "100%",
-                    backgroundColor: "transparent",
-                    overflow: "hidden",
+                    width: "100%",
+                    height: "200px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    gap: "0.8rem",
+                    backgroundColor: "#f8f9fa",
+                    borderRadius: "12px",
+                    border: "1px solid #e5e7eb",
                   }}
-                  allow="encrypted-media"
-                  title="트위터 타임라인"
-                />
-                <style jsx>{`
-                  .hidden-scrollbar::-webkit-scrollbar {
-                    display: none; /* Chrome, Safari, Opera */
-                  }
-                `}</style>
-              </div>
-            </div>
+                >
+                  <div
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      border: "3px solid #e3e3e3",
+                      borderTop: "3px solid #1da1f2",
+                      borderRadius: "50%",
+                      animation: "spin 1s linear infinite",
+                    }}
+                  />
+                  <p
+                    style={{
+                      color: "#6b7280",
+                      fontSize: "0.85rem",
+                      margin: 0,
+                    }}
+                  >
+                    트윗 로딩 중...
+                  </p>
+                  <style jsx>{`
+                    @keyframes spin {
+                      0% {
+                        transform: rotate(0deg);
+                      }
+                      100% {
+                        transform: rotate(360deg);
+                      }
+                    }
+                  `}</style>
+                </div>
+              }
+            />
           </div>
         )}
 
